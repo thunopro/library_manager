@@ -113,6 +113,7 @@ python app/main.py
 ```
 
 ### Cấu trúc thư mục 
+```bash 
 library-manager/
 ├── app/
 │   ├── db/
@@ -133,7 +134,7 @@ library-manager/
 ├── .gitignore                 # Bỏ qua các file không cần thiết
 ├── requirements.txt           # Danh sách thư viện cần thiết
 └── README.md                  # Tài liệu hướng dẫn này
-
+```
 ### Ảnh chụp màn hình 
 
 1. Dashboard Thống Kê & KPI
@@ -148,15 +149,26 @@ library-manager/
 ![GUI](picture/QUERY3.png)
 ![GUI](picture/QUERY4.png)
 
-### Giải Thích Thiết Kế Database (3NF) 
-Dữ liệu ban đầu (UNF) chứa các cột lặp lại và phụ thuộc không hoàn toàn. Nhóm đã chuẩn hóa về dạng 3NF như sau:
-Authors (1NF -> 2NF): Tách AuthorName ra khỏi bảng Books để tránh lặp lại và xóa sự phụ thuộc bắc cầu (BookID -> AuthorName).
-Books (3NF): Chỉ chứa thông tin về sách và tham chiếu AuthorID (Foreign Key).
-Borrowers (3NF): Lưu trữ thông tin độc giả nguyên tố, tách biệt với thông tin mượn sách.
-Loans (3NF): Bảng trung gian giải quyết quan hệ N-N giữa Người và Sách, lưu trữ trạng thái giao dịch (BorrowedDate, DueDate, Status).
+### 🗄️ Giải Thích Thiết Kế Database (3NF)
+
+Dữ liệu ban đầu (UNF) chứa các cột lặp lại và phụ thuộc không hoàn toàn. Nhóm đã chuẩn hóa về dạng **3NF** như sau:
+
+- **Authors (1NF → 2NF)**  
+  Tách `AuthorName` ra khỏi bảng `Books` để tránh lặp lại và xóa sự phụ thuộc bắc cầu (`BookID -> AuthorName`).
+
+- **Books (3NF)**  
+  Chỉ chứa thông tin về sách và tham chiếu `AuthorID` (Foreign Key).
+
+- **Borrowers (3NF)**  
+  Lưu trữ thông tin độc giả nguyên tố, tách biệt với thông tin mượn sách.
+
+- **Loans (3NF)**  
+  Bảng trung gian giải quyết quan hệ N-N giữa người và sách, lưu trữ trạng thái giao dịch (`BorrowedDate`, `DueDate`, `Status`).
+
+---
 
 ### ⚖️ License & Acknowledgements
-Dự án này là bài tập cuối kỳ môn Cơ Sở Dữ Liệu.
-Giảng viên hướng dẫn: Trần Đức Minh. 
 
+Dự án này là bài tập cuối kỳ môn **Cơ Sở Dữ Liệu**.  
+Giảng viên hướng dẫn: **Trần Đức Minh**.
 
