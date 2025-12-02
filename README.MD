@@ -19,9 +19,8 @@ Xem video demo chi tiết các chức năng và luồng hoạt động của ứ
 
 | STT | Họ và Tên | MSSV | Vai Trò & Đóng Góp |
 |:--:|:---|:---|:---|
-| 1 | **[Tên Bạn A]** | [MSSV] | **Team Leader**: Thiết kế Database, Logic Backend (Models), Code Review. |
-| 2 | **[Tên Bạn B]** | [MSSV] | **Frontend Dev**: Xây dựng GUI (Tkinter), Xử lý biểu đồ (Matplotlib), Export CSV. |
-| 3 | **[Tên Bạn C]** | [MSSV] | **Tester & Doc**: Tạo dữ liệu mẫu (Seed), Testing, Viết báo cáo & Slides. |
+| 1 | **Tran Tue Khang** | [MSSV] | **Team Leader**: Idea , Report , Slide , Code Review. |
+| 2 | **Nguyen Khac Thu** | [MSSV] | **Coder**: Xây dựng GUI (Tkinter), Thiết kế Database, Export CSV. |
 
 ---
 
