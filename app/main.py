@@ -14,6 +14,7 @@ from matplotlib.backends.backend_tkagg import FigureCanvasTkAgg
 from app.models.report_model import ReportModel
 from app.models.borrower_model import BorrowerModel 
 from app.models.loan_model import LoanModel 
+from app.models.author_model import AuthorModel 
 
 
 class LibraryApp(tk.Tk):
@@ -44,6 +45,7 @@ class LibraryApp(tk.Tk):
         self.book_model = BookModel()
         self.borrower_model = BorrowerModel() 
         self.loan_model = LoanModel() 
+        self.author_model = AuthorModel()
         # Tạo giao diện chính
         self.create_widgets()
 
@@ -56,25 +58,29 @@ class LibraryApp(tk.Tk):
         self.tabs = ttk.Notebook(self)
         self.tabs.pack(fill=tk.BOTH, expand=True, padx=10, pady=5)
 
-        # --- TAB 1: QUẢN LÝ SÁCH ---
+        # --- TAB : QUẢN LÝ SÁCH ---
         self.tab_books = tk.Frame(self.tabs)
-        self.tabs.add(self.tab_books, text=" 📚 Quản Lý Sách ")
+        self.tabs.add(self.tab_books, text=" Quản Lý Sách ")
         self.setup_book_tab()
 
-        # --- TAB 2: NGƯỜI MƯỢN ---
+        # --- TAB : TÁC GIẢ
+        self.tab_authors = tk.Frame(self.tabs)
+        self.tabs.add(self.tab_authors, text=" Quản Lý Tác Giả ") # Tab mới
+        self.setup_author_tab() 
+        
+        # --- TAB : NGƯỜI MƯỢN ---
         self.tab_borrowers = tk.Frame(self.tabs)
-        self.tabs.add(self.tab_borrowers, text=" 👤 Người Mượn ")
+        self.tabs.add(self.tab_borrowers, text=" Người Mượn ")
         self.setup_borrower_tab()
 
-        # --- TAB 3: MƯỢN / TRẢ ---
+        # --- TAB : MƯỢN / TRẢ ---
         self.tab_loans = tk.Frame(self.tabs)
-        self.tabs.add(self.tab_loans, text=" 🔄 Mượn Trả Sách ")
-        # [GỌI HÀM VỪA VIẾT]
+        self.tabs.add(self.tab_loans, text=" Mượn Trả Sách ")
         self.setup_loan_tab()
         
-        # --- TAB 4: THỐNG KÊ & BÁO CÁO ---
+        # --- TAB : THỐNG KÊ & BÁO CÁO ---
         self.tab_reports = tk.Frame(self.tabs)
-        self.tabs.add(self.tab_reports, text=" 📊 Báo Cáo & Dashboard ")
+        self.tabs.add(self.tab_reports, text=" Báo Cáo & Dashboard ")
         self.setup_report_tab()
         
         # ========================================================
@@ -156,6 +162,97 @@ class LibraryApp(tk.Tk):
         # Load mặc định cái đầu tiên
         self.load_selected_report()
 
+    def setup_author_tab(self):
+        # 1. Toolbar
+        frame_controls = tk.Frame(self.tab_authors, pady=10)
+        frame_controls.pack(fill=tk.X, padx=10)
+
+        # Nút Thêm
+        btn_add = tk.Button(frame_controls, text="+ Thêm Tác Giả", bg="#2196F3", fg="white", 
+                            command=self.open_add_author_dialog)
+        btn_add.pack(side=tk.LEFT, padx=5)
+
+        # Nút Xóa
+        btn_del = tk.Button(frame_controls, text="✕ Xóa", bg="#F44336", fg="white",
+                            command=self.delete_author_action)
+        btn_del.pack(side=tk.LEFT, padx=5)
+
+        # Nút Tải lại
+        btn_reload = tk.Button(frame_controls, text="⟳ Tải lại", command=self.load_authors)
+        btn_reload.pack(side=tk.RIGHT, padx=5)
+
+        # 2. Bảng dữ liệu (Treeview)
+        self.tree_authors = ttk.Treeview(self.tab_authors, columns=("id", "name"), show="headings", height=15)
+        
+        self.tree_authors.heading("id", text="ID")
+        self.tree_authors.heading("name", text="Tên Tác Giả")
+        
+        self.tree_authors.column("id", width=50, anchor=tk.CENTER)
+        self.tree_authors.column("name", width=400)
+        
+        self.tree_authors.pack(fill=tk.BOTH, expand=True, padx=10, pady=5)
+        
+        # Load dữ liệu lần đầu
+        self.load_authors()
+
+    def load_authors(self):
+        """Lấy danh sách tác giả từ DB đổ vào bảng"""
+        # Xóa cũ
+        for item in self.tree_authors.get_children():
+            self.tree_authors.delete(item)
+        
+        # Lấy mới
+        authors = self.author_model.get_all_authors()
+        if authors:
+            for a in authors:
+                self.tree_authors.insert("", tk.END, values=(a['AuthorID'], a['AuthorName']))
+
+    def open_add_author_dialog(self):
+        """Mở cửa sổ thêm tác giả"""
+        dialog = tk.Toplevel(self)
+        dialog.title("Thêm Tác Giả Mới")
+        dialog.geometry("350x150")
+        
+        tk.Label(dialog, text="Nhập Tên Tác Giả:").pack(pady=10)
+        entry_name = tk.Entry(dialog, width=35)
+        entry_name.pack(pady=5)
+        entry_name.focus()
+        
+        def save():
+            name = entry_name.get().strip()
+            if not name:
+                messagebox.showwarning("Thiếu thông tin", "Vui lòng nhập tên tác giả!")
+                return
+            
+            if self.author_model.add_author(name):
+                messagebox.showinfo("Thành công", "Đã thêm tác giả mới!")
+                self.load_authors() # Refresh lại bảng
+                dialog.destroy()
+            else:
+                messagebox.showerror("Lỗi", "Có lỗi khi lưu vào Database")
+                
+        tk.Button(dialog, text="Lưu", bg="#4CAF50", fg="white", command=save).pack(pady=10)
+
+    def delete_author_action(self):
+        """Xóa tác giả"""
+        sel = self.tree_authors.selection()
+        if not sel:
+            messagebox.showwarning("Chọn dòng", "Vui lòng chọn tác giả cần xóa!")
+            return
+            
+        item = self.tree_authors.item(sel[0])
+        a_id = item['values'][0]
+        a_name = item['values'][1]
+        
+        msg = f"Bạn có chắc muốn xóa tác giả: {a_name}?\n(Các cuốn sách của tác giả này sẽ bị mất thông tin tác giả)"
+        if messagebox.askyesno("Xác nhận xóa", msg):
+            if self.author_model.delete_author(a_id):
+                messagebox.showinfo("Đã xóa", "Xóa thành công!")
+                self.load_authors()
+                self.load_books() # Refresh cả tab sách vì sách có thể bị đổi thông tin
+            else:
+                messagebox.showerror("Lỗi", "Không thể xóa tác giả này.")
+                
     def load_selected_report(self):
         """Hàm xử lý logic khi chọn loại báo cáo"""
         report_type = self.cbb_report_type.get()
@@ -238,7 +335,7 @@ class LibraryApp(tk.Tk):
         self.entry_search_book.pack(side=tk.LEFT, padx=5)
         
         # Nút icon kính lúp hoặc chữ Tìm
-        btn_search = tk.Button(frame_controls, text="🔍 Tìm", command=self.search_book)
+        btn_search = tk.Button(frame_controls, text="Tìm", command=self.search_book)
         btn_search.pack(side=tk.LEFT, padx=5)
 
         # [PHẦN CŨ] Các nút chức năng (Thêm khoảng cách padx để tách nhóm tìm kiếm ra)
@@ -363,7 +460,7 @@ class LibraryApp(tk.Tk):
         self.show_book_dialog("Sửa Sách", book_id=vals[0], current_title=vals[1], current_author_name=vals[2])
 
     def show_book_dialog(self, title_window, book_id=None, current_title="", current_author_name=""):
-        """Hàm dựng cửa sổ chung cho Thêm và Sửa"""
+        """Hàm dựng cửa sổ chung cho Thêm và Sửa Sách (Đã cập nhật logic Tác giả)"""
         dialog = tk.Toplevel(self)
         dialog.title(title_window)
         dialog.geometry("400x250")
@@ -377,24 +474,34 @@ class LibraryApp(tk.Tk):
         # 2. Chọn tác giả (Dropdown)
         tk.Label(dialog, text="Tác Giả:").pack(pady=5)
         
-        # Lấy danh sách tác giả từ DB
-        authors = self.book_model.get_authors() # List các dict {'AuthorID': 1, 'AuthorName': '...'}
+        # --- [QUAN TRỌNG] Lấy danh sách từ AuthorModel ---
+        authors = self.author_model.get_all_authors() 
+        # authors là list các dict: [{'AuthorID': 1, 'AuthorName': 'ABC'}, ...]
+        
         author_names = [a['AuthorName'] for a in authors]
         
         cbb_author = ttk.Combobox(dialog, values=author_names, width=37, state="readonly")
         cbb_author.pack(pady=5)
         
-        # Nếu đang sửa, set giá trị tác giả hiện tại
+        # Logic chọn giá trị mặc định cho Combobox
         if current_author_name and current_author_name != "N/A":
-            cbb_author.set(current_author_name)
+            if current_author_name in author_names:
+                cbb_author.set(current_author_name)
+        elif author_names:
+            cbb_author.current(0) # Mặc định chọn người đầu tiên
+        # ------------------------------------------------
         
         # Hàm Lưu
         def save_action():
             title_input = entry_title.get().strip()
             author_input = cbb_author.get()
             
-            if not title_input or not author_input:
-                messagebox.showerror("Lỗi", "Vui lòng nhập tên sách và chọn tác giả!")
+            if not title_input:
+                messagebox.showerror("Lỗi", "Vui lòng nhập tên sách!")
+                return
+            
+            if not author_input:
+                messagebox.showerror("Lỗi", "Vui lòng chọn tác giả (Nếu chưa có, hãy qua tab Tác Giả để thêm)!")
                 return
             
             # Tìm ID của tác giả dựa trên tên
@@ -659,7 +766,7 @@ class LibraryApp(tk.Tk):
             status = loan['Status']
             
             # Insert vào bảng
-            self.tree_loans.insert("", tk.END, values=(
+            self.tree_loans.insert("", 0, values=(
                 loan['LoanID'],
                 loan['BorrowerName'],
                 loan['BookTitle'],
