@@ -11,7 +11,7 @@
 
 ### 🎥 Demo Video
 Xem video demo chi tiết các chức năng và luồng hoạt động của ứng dụng tại đây:  
-👉 [**LINK YOUTUBE DEMO (UNLISTED)**](https://youtu.be/AwsxaJFA394)
+👉 [**LINK YOUTUBE DEMO  https://youtu.be/AwsxaJFA394 (UNLISTED)**](https://youtu.be/AwsxaJFA394)
 
 ---
 
