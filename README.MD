@@ -11,7 +11,7 @@
 
 ### 🎥 Demo Video
 Xem video demo chi tiết các chức năng và luồng hoạt động của ứng dụng tại đây:  
-👉 [**LINK YOUTUBE DEMO (UNLISTED)**](https://youtube.com/...)
+👉 [**LINK YOUTUBE DEMO (UNLISTED)**](https://youtu.be/AwsxaJFA394)
 
 ---
 
@@ -19,8 +19,8 @@ Xem video demo chi tiết các chức năng và luồng hoạt động của ứ
 
 | STT | Họ và Tên | MSSV | Vai Trò & Đóng Góp |
 |:--:|:---|:---|:---|
-| 1 | **Tran Tue Khang** | [MSSV] | **Team Leader**: Idea , Report , Slide , Code Review. |
-| 2 | **Nguyen Khac Thu** | [MSSV] | **Coder**: Xây dựng GUI (Tkinter), Thiết kế Database, Export CSV. |
+| 1 | **Tran Tue Khang** | [11247303] | **Team Leader**: Idea , Report , Slide , Code Review. |
+| 2 | **Nguyen Khac Thu** | [11248480] | **Coder**: Xây dựng GUI (Tkinter), Thiết kế Database, Export CSV. |
 
 ---
 
